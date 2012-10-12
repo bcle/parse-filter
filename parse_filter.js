@@ -22,12 +22,12 @@ function request_filter(reqFromApp, respToApp, next) {
   var ctype = reqFromApp.headers['content-type']; 
   if (ctype && ctype.indexOf('application/json') >= 0) {
     var body = reqFromApp.body;
-    log.warn('Request filter: %s with json body of length %d on URL %s : \n%j',
-        reqFromApp.method,
-        body? body.length : 0,
-        reqFromApp.url,
-        body? body.toString() : ''
-        );
+    log.warn('Request filter: %s with json body of length %d on URL %s : \n%s',
+      reqFromApp.method,
+      body? body.length : 0,
+      reqFromApp.url,
+      body? body.toString() : ''
+    );
   }
   next();
 }
@@ -46,9 +46,9 @@ function response_filter(reqFromApp, respFromRemote, next) {
   if (ctype && ctype.indexOf('application/json') >= 0) {  
     var body = respFromRemote.body;
     log.warn('Response filter: status %d with json body of length %d: \n%s',
-        respFromRemote.statusCode,
-        body? body.length : 0,
-        body? body.toString() : ''
+      respFromRemote.statusCode,
+      body? body.length : 0,
+      body? body.toString() : ''
     );
   }
 
