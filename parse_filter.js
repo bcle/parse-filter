@@ -22,12 +22,32 @@ function request_filter(reqFromApp, respToApp, next) {
   var ctype = reqFromApp.headers['content-type']; 
   if (ctype && ctype.indexOf('application/json') >= 0) {
     var body = reqFromApp.body;
+    var obj = JSON.parse(body.toString());
+
     log.warn('Request filter: %s with json body of length %d on URL %s : \n%s',
       reqFromApp.method,
       body? body.length : 0,
       reqFromApp.url,
-      body? body.toString() : ''
+      body? JSON.stringify(obj, null, 2) : ''
     );
+
+    if (obj && obj.commands && Array.isArray(obj.commands)) {
+      var cmd = obj.commands[0];
+      if (cmd && cmd.params && cmd.params.data) {
+        var dataStr = cmd.params.data;
+	var data = JSON.parse(dataStr);
+	data.foo = 'bar';
+
+	if (typeof data.name === 'string')
+	  data.name = data.name + ' (hacked)';
+	if (typeof data.priority === 'number')
+	  data.priority += 2;
+	var newStr = JSON.stringify(data);
+	cmd.params.data = newStr;
+	log.warn('Modified data: %s', JSON.stringify(data, null, 2)); 
+	reqFromApp.body = new Buffer(JSON.stringify(obj));
+      }
+    }
   }
   next();
 }
@@ -48,7 +68,7 @@ function response_filter(reqFromApp, respFromRemote, next) {
     log.warn('Response filter: status %d with json body of length %d: \n%s',
       respFromRemote.statusCode,
       body? body.length : 0,
-      body? body.toString() : ''
+      body? JSON.stringify(JSON.parse(body.toString()), null, 2) : ''
     );
   }
 
