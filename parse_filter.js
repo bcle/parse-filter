@@ -20,8 +20,11 @@ var log = proxy.getLogger();
  */
 function request_filter(reqFromApp, respToApp, next) {
   var ctype = reqFromApp.headers['content-type']; 
-  if (ctype && ctype.indexOf('application/json') >= 0) {
-    var body = reqFromApp.body;
+  var body = reqFromApp.body;
+  if (!ctype) 
+    return next();
+
+  if (ctype.indexOf('application/json') >= 0) {
     var obj = JSON.parse(body.toString());
 
     log.warn('Request filter: %s with json body of length %d on URL %s : \n%s',
@@ -48,6 +51,13 @@ function request_filter(reqFromApp, respToApp, next) {
 	reqFromApp.body = new Buffer(JSON.stringify(obj));
       }
     }
+  } else if (ctype.indexOf('text/plain') >= 0) {
+    log.warn('Request filter: %s with text/plain body of length %d on URL %s : \n%s',
+      reqFromApp.method,
+      body? body.length : 0,
+      reqFromApp.url,
+      body? body.toString() : ''
+    );
   }
   next();
 }
@@ -64,12 +74,17 @@ function request_filter(reqFromApp, respToApp, next) {
 function response_filter(reqFromApp, respFromRemote, next) {
   var ctype = respFromRemote.headers['content-type'];
   if (ctype && ctype.indexOf('application/json') >= 0) {  
-    var body = respFromRemote.body;
-    log.warn('Response filter: status %d with json body of length %d: \n%s',
-      respFromRemote.statusCode,
-      body? body.length : 0,
-      body? JSON.stringify(JSON.parse(body.toString()), null, 2) : ''
-    );
+    try {
+      var body = respFromRemote.body;
+      var obj = JSON.parse(body.toString());
+      log.warn('response filter: status %d with json body of length %d: \n%s',
+        respFromRemote.statusCode,
+        body? body.length : 0,
+        body? JSON.stringify(obj, null, 2) : ''
+      );
+    } catch (err) {
+      log.error('Caught exception during response body processing: %s', err);
+    }
   }
 
   next();
