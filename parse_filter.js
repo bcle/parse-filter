@@ -74,14 +74,22 @@ function request_filter(reqFromApp, respToApp, next) {
 function response_filter(reqFromApp, respFromRemote, next) {
   var ctype = respFromRemote.headers['content-type'];
   if (ctype && ctype.indexOf('application/json') >= 0) {  
-    try {
+    var cenc = respFromRemote.headers['content-encoding'];
+    if (cenc) {
+      log.warn('response filter: ignoring JSON body with content encoding: %s', cenc);
+    } else try {
       var body = respFromRemote.body;
-      var obj = JSON.parse(body.toString());
-      log.warn('response filter: status %d with json body of length %d: \n%s',
-        respFromRemote.statusCode,
-        body? body.length : 0,
-        body? JSON.stringify(obj, null, 2) : ''
-      );
+      var str = body.toString();
+      try {
+        var obj = JSON.parse(str);
+        log.warn('response filter: status %d with json body of length %d: \n%s',
+          respFromRemote.statusCode,
+          body? body.length : 0,
+          body? JSON.stringify(obj, null, 2) : ''
+        );  
+      } catch (err) {
+        log.error('Caught exception %s while parsing JSON from string: %s', err, str);
+      }
     } catch (err) {
       log.error('Caught exception during response body processing: %s', err);
     }
