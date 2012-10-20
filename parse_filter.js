@@ -82,6 +82,12 @@ function response_filter(reqFromApp, respFromRemote, next) {
   if (!ctype || ctype.indexOf('application/json') < 0)
     return next();
 
+  var xfer_encoding = respFromRemote.headers['transfer-encoding'];
+  if (xfer_encoding) {
+    log.warn('Response filter: skipping transfer encoding of type: %s', xfer_encoding);
+    return next();
+  }
+
   var encoding = respFromRemote.headers['content-encoding'];
   if (!encoding) {
     decode_json(null, body);
