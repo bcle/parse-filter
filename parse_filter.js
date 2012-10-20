@@ -8,6 +8,7 @@ options.response_filter = response_filter;
 
 var proxy = new Proxy(options);
 var log = proxy.getLogger();
+var zlib = require('zlib');
 
 /*
  * reqFromApp: The http request from the client application.
@@ -72,20 +73,39 @@ function request_filter(reqFromApp, respToApp, next) {
  *       This forwards the (potentially modified) request to the remote server.
  */
 function response_filter(reqFromApp, respFromRemote, next) {
+  var body = respFromRemote.body;
+
+  if (!body || !body.length)
+    return next();
+
   var ctype = respFromRemote.headers['content-type'];
-  if (ctype && ctype.indexOf('application/json') >= 0) {  
-    var cenc = respFromRemote.headers['content-encoding'];
-    if (cenc) {
-      log.warn('response filter: ignoring JSON body with content encoding: %s', cenc);
+  if (!ctype || ctype.indexOf('application/json') < 0)
+    return next();
+
+  var encoding = respFromRemote.headers['content-encoding'];
+  if (!encoding) {
+    decode_json(null, body);
+  } else if (encoding === 'gzip') {
+    log.warn('Response filter: decompressing gzip buffer of size: %d', body.length);
+    zlib.gunzip(body, decode_json); 
+  } else {
+    log.warn('Response filter: ignoring JSON body with unknown content encoding: %s', encoding);
+    next();
+  }
+
+  function decode_json(err, buf) {
+    if (err) {
+      log.error('Response filter: gzip decoding failed: %s', err);
     } else try {
-      var body = respFromRemote.body;
-      var str = body.toString();
+      var str = buf.toString();
+      if (encoding === 'gzip')
+        log.warn('Response filter: decompressed from %d to %d bytes', body.length, buf.length);
       try {
         var obj = JSON.parse(str);
-        log.warn('response filter: status %d with json body of length %d: \n%s',
+        log.warn('Response filter: status %d with json body of length %d: \n%s',
           respFromRemote.statusCode,
-          body? body.length : 0,
-          body? JSON.stringify(obj, null, 2) : ''
+          buf? buf.length : 0,
+          buf? JSON.stringify(obj, null, 2) : ''
         );  
       } catch (err) {
         log.error('Caught exception %s while parsing JSON from string: %s', err, str);
@@ -93,8 +113,7 @@ function response_filter(reqFromApp, respFromRemote, next) {
     } catch (err) {
       log.error('Caught exception during response body processing: %s', err);
     }
+    next();
   }
-
-  next();
 }
 
