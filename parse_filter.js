@@ -2,6 +2,7 @@ var Proxy = require('mitm-proxy')
   , hexy = require('hexy')
   , tmp = require('tmp')
   , fs = require('fs')
+  , qs = require('querystring')
   , URL = require('url');
 
 var optionsParser = Proxy.getOptionsParser();
@@ -24,15 +25,27 @@ var zlib = require('zlib');
  */
 function request_filter(reqFromApp, respToApp, next) {
 
-  // temporary hack to disable compressed responses
-  delete reqFromApp.headers['accept-encoding'];
-
   var ctype = reqFromApp.headers['content-type']; 
   if (!ctype) 
     return next();
 
-  if (ctype.indexOf('application/json') >= 0) {
-    var body = reqFromApp.body;
+  var body = reqFromApp.body;
+  if (ctype.indexOf('application/x-www-form-urlencoded') >= 0) {
+    var urlenc_str = body.toString();
+    log.trace('Request filter: %s with x-www-form-urlencoded body of length %d on URL %s : \n%s',
+      reqFromApp.method,
+      body? body.length : 0,
+      reqFromApp.url,
+      urlenc_str
+    );
+    try {
+      var obj = qs.parse(urlenc_str);
+      log.warn('Request filter: decoded URL-encoded body:\n%s\n', JSON.stringify(obj, null, 2));
+    } catch (err) {
+      log.error('Caught exception [%s] while parsing url-encoded string: %s', err, urlenc_str);
+    }
+    
+  } else if (ctype.indexOf('application/json') >= 0) {
     var obj = JSON.parse(body.toString());
 
     log.warn('Request filter: %s with json body of length %d on URL %s : \n%s',
@@ -86,21 +99,8 @@ function response_filter(reqFromApp, respFromRemote, next) {
     return next();
 
   var ctype = respFromRemote.headers['content-type'];
-  // temporary hack
-  if (ctype === 'text/plain') {
-    log.warn('Response filter: text/plain body is:\n----\n%s\n----', hexy.hexy(body, { format: 'twos' }));
-    return next();
-  }
-
   if (!ctype || ctype.indexOf('application/json') < 0)
     return next();
-
-  var xfer_encoding = respFromRemote.headers['transfer-encoding'];
-  if (xfer_encoding) {
-    log.warn('Response filter: detected transfer encoding of type: %s', xfer_encoding);
-    log.warn('Response filter: body is:\n----\n%s\n----', hexy.hexy(body, { format: 'twos' }));
-    // return next();
-  }
 
   var encoding = respFromRemote.headers['content-encoding'];
   if (!encoding) {
@@ -129,12 +129,12 @@ function response_filter(reqFromApp, respFromRemote, next) {
         );  
       } catch (err) {
         log.error('Caught exception %s while parsing JSON from string: %s', err, str);
-        var opts = { prefix: 'chunked-', postfix: '.gz', keep: true };
+        var opts = { prefix: 'bad-json-' + (encoding? (encoding + '-'):''), keep: true };
         tmp.file(opts, function tmpFileCb(err, path) {
           if (err) return next();
           fs.writeFile(path, body, function writeFileCb(err) {
             if (!err)
-	      log.warn('Chunked gzip body written to: %s', path);
+	      log.warn('Body containing bad JSON written to: %s', path);
           });
         });
       }
