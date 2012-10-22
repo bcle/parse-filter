@@ -30,6 +30,15 @@ function request_filter(reqFromApp, respToApp, next) {
     return next();
 
   var body = reqFromApp.body;
+  var obj = null; // JSON body
+
+  log.warn('Request filter: %s %s enc [%s] body length %d body:\n%s',
+    reqFromApp.method,
+    reqFromApp.url,
+    ctype,
+    body? body.length : 0,
+    body? body.toString():'');
+
   if (ctype.indexOf('application/x-www-form-urlencoded') >= 0) {
     var urlenc_str = body.toString();
     log.trace('Request filter: %s with x-www-form-urlencoded body of length %d on URL %s : \n%s',
@@ -39,14 +48,13 @@ function request_filter(reqFromApp, respToApp, next) {
       urlenc_str
     );
     try {
-      var obj = qs.parse(urlenc_str);
-      log.warn('Request filter: decoded URL-encoded body:\n%s\n', JSON.stringify(obj, null, 2));
+      obj = qs.parse(urlenc_str);
+      log.trace('Request filter: decoded URL-encoded body:\n%s\n', JSON.stringify(obj, null, 2));
     } catch (err) {
       log.error('Caught exception [%s] while parsing url-encoded string: %s', err, urlenc_str);
     }
-    
   } else if (ctype.indexOf('application/json') >= 0) {
-    var obj = JSON.parse(body.toString());
+    obj = JSON.parse(body.toString());
 
     log.warn('Request filter: %s with json body of length %d on URL %s : \n%s',
       reqFromApp.method,
@@ -54,8 +62,21 @@ function request_filter(reqFromApp, respToApp, next) {
       reqFromApp.url,
       body? JSON.stringify(obj, null, 2) : ''
     );
-
-    if (obj && obj.commands && Array.isArray(obj.commands)) {
+  }
+  if (obj) {
+    if (typeof obj.data === 'string') {
+      try {
+	var data = JSON.parse(obj.data);
+	obj.data = data;
+        log.warn('Request filter: %s with url-encoded json body of length %d on URL %s : \n%s',
+                  reqFromApp.method,
+                  body? body.length : 0,
+                  reqFromApp.url,
+                  JSON.stringify(obj, null, 2));
+      } catch (err) {
+        log.error('Caught exception %s while parsing JSON from string: %s', err, obj.data);
+      }
+    } else if (obj.commands && Array.isArray(obj.commands)) {
       var cmd = obj.commands[0];
       if (cmd && cmd.params && cmd.params.data) {
         var dataStr = cmd.params.data;
