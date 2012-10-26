@@ -25,6 +25,11 @@ var zlib = require('zlib');
  */
 function request_filter(reqFromApp, respToApp, next) {
 
+  var urlInfo = URL.parse(reqFromApp.url);
+  if (urlInfo.hostname !== 'api.parse.com') {
+    log.warn('Skipping url with hostname: %s', urlInfo.hostname);
+    return next();
+  }  
   var ctype = reqFromApp.headers['content-type']; 
   if (!ctype) 
     return next();
@@ -40,6 +45,12 @@ function request_filter(reqFromApp, respToApp, next) {
     body? body.toString():'');
 
   if (ctype.indexOf('application/x-www-form-urlencoded') >= 0) {
+    // hack
+    /*
+    var modified_str = body.toString() + '&foo=bar';
+    reqFromApp.body = new Buffer(modified_str);
+    body = reqFromApp.body;
+    */
     var urlenc_str = body.toString();
     log.trace('Request filter: %s with x-www-form-urlencoded body of length %d on URL %s : \n%s',
       reqFromApp.method,
@@ -67,8 +78,11 @@ function request_filter(reqFromApp, respToApp, next) {
     if (typeof obj.data === 'string') {
       try {
 	var data = JSON.parse(obj.data);
+	// Hack for AnyWall
+	if (typeof data.text === 'string')
+	  data.text = data.text + ' (hacked)';
 	obj.data = data;
-        log.warn('Request filter: %s with url-encoded json body of length %d on URL %s : \n%s',
+        log.warn('Request filter: %s with json body of length %d on URL %s after converting "data" from string to json: \n%s',
                   reqFromApp.method,
                   body? body.length : 0,
                   reqFromApp.url,
@@ -76,6 +90,7 @@ function request_filter(reqFromApp, respToApp, next) {
       } catch (err) {
         log.error('Caught exception %s while parsing JSON from string: %s', err, obj.data);
       }
+      reqFromApp.body = new Buffer(JSON.stringify(obj));
     } else if (obj.commands && Array.isArray(obj.commands)) {
       var cmd = obj.commands[0];
       if (cmd && cmd.params && cmd.params.data) {
