@@ -96,15 +96,16 @@ function request_filter(reqFromApp, respToApp, next) {
       if (cmd && cmd.params && cmd.params.data) {
         var dataStr = cmd.params.data;
 	var data = JSON.parse(dataStr);
-	data.foo = 'bar';
+	// data.foo = 'bar';
 
 	if (typeof data.name === 'string')
 	  data.name = data.name + ' (hacked)';
 	if (typeof data.priority === 'number')
 	  data.priority += 2;
 	var newStr = JSON.stringify(data);
-	cmd.params.data = newStr;
-	log.warn('Modified data: %s', JSON.stringify(data, null, 2)); 
+	// cmd.params.data = newStr;
+	cmd.params.data = data;
+	log.warn('Modified data:\n%s', JSON.stringify(data, null, 2)); 
 	reqFromApp.body = new Buffer(JSON.stringify(obj));
       }
     }
