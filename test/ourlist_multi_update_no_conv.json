@@ -1,0 +1,18 @@
+{
+  "iid": "1B9EBAB4-2D9E-4E77-AB98-ED14B31ABD9F",
+  "session_token": "g1uguhdezmetjlj7mc2g3f6xa",
+  "uuid": "8CB9C215-743A-4F1D-833E-E01AEFD2B255",
+  "commands": [
+    {
+      "op": "update",
+      "params": {
+        "data": "{\"photo\":{\"url\":\"http://files.parse.com/16065a59-0d87-4ebd-b6c2-4de41dceef97/bcca4edd-6e4c-4417-bc53-7ad9c1669415-74S9lR5VEO-photo.png\",\"name\":\"bcca4edd-6e4c-4417-bc53-7ad9c1669415-74S9lR5VEO-photo.png\",\"__type\":\"File\"},\"name\":\"Bob\",\"objectId\":\"74S9lR5VEO\",\"toDoItem\":[{\"objectId\":\"hunlyYnmAe\",\"className\":\"ToDoItem\",\"__type\":\"Pointer\"},{\"objectId\":\"5pEAd33Eao\",\"className\":\"ToDoItem\",\"__type\":\"Pointer\"},{\"objectId\":\"ruEUHhelHp\",\"className\":\"ToDoItem\",\"__type\":\"Pointer\"}],\"ACL\":{\"hhWbGENGIg\":{\"write\":true,\"read\":true}}}",
+        "uuid": "882FD20F-B009-4694-A9D7-77C2E7C66618",
+        "classname": "Person"
+      }
+    }
+  ],
+  "includeRelationStub": true,
+  "v": "i1.0.67"
+}
+

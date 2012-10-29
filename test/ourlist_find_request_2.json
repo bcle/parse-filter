@@ -1,0 +1,18 @@
+{
+  "iid": "1B9EBAB4-2D9E-4E77-AB98-ED14B31ABD9F",
+  "data": {
+    "updatedAt": {
+      "$gt": {
+        "iso": "2012-10-26T01:38:40.473Z",
+        "__type": "Date"
+      }
+    }
+  },
+  "classname": "ToDoItem",
+  "limit": "1000",
+  "v": "i1.0.67",
+  "includeRelationStub": true,
+  "session_token": "g1uguhdezmetjlj7mc2g3f6xa",
+  "uuid": "A22A4713-0909-4F75-98B2-31692DA43A1F"
+}
+

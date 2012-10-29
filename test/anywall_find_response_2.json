@@ -1,0 +1,223 @@
+{
+  "result": {
+    "results": [
+      {
+        "data": {
+          "user": {
+            "username": "foo",
+            "email": "foo@bar.com",
+            "createdAt": "2012-10-22T05:00:22.059Z",
+            "updatedAt": "2012-10-22T05:00:22.059Z",
+            "objectId": "jwR6k9QRF5",
+            "__type": "Object",
+            "className": "_User"
+          },
+          "location": {
+            "__type": "GeoPoint",
+            "latitude": 37.785834,
+            "longitude": -122.406417
+          },
+          "text": "My fave resto",
+          "createdAt": "2012-10-22T16:00:29.176Z",
+          "updatedAt": "2012-10-22T16:00:29.176Z",
+          "objectId": "FHuL9qdqML",
+          "ACL": {
+            "*": {
+              "read": true
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "user": {
+            "username": "foo",
+            "email": "foo@bar.com",
+            "createdAt": "2012-10-22T05:00:22.059Z",
+            "updatedAt": "2012-10-22T05:00:22.059Z",
+            "objectId": "jwR6k9QRF5",
+            "__type": "Object",
+            "className": "_User"
+          },
+          "location": {
+            "__type": "GeoPoint",
+            "latitude": 37.785834,
+            "longitude": -122.406417
+          },
+          "text": "VMware office building\n",
+          "createdAt": "2012-10-22T16:06:46.705Z",
+          "updatedAt": "2012-10-22T16:06:46.705Z",
+          "objectId": "fQifd88zJx",
+          "ACL": {
+            "*": {
+              "read": true
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "user": {
+            "username": "foo",
+            "email": "foo@bar.com",
+            "createdAt": "2012-10-22T05:00:22.059Z",
+            "updatedAt": "2012-10-22T05:00:22.059Z",
+            "objectId": "jwR6k9QRF5",
+            "__type": "Object",
+            "className": "_User"
+          },
+          "location": {
+            "__type": "GeoPoint",
+            "latitude": 37.785834,
+            "longitude": -122.406417
+          },
+          "text": "Gym\n",
+          "createdAt": "2012-10-22T16:28:32.326Z",
+          "updatedAt": "2012-10-22T16:28:32.326Z",
+          "objectId": "KYDwY9cudA",
+          "ACL": {
+            "*": {
+              "read": true
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "user": {
+            "username": "foo",
+            "email": "foo@bar.com",
+            "createdAt": "2012-10-22T05:00:22.059Z",
+            "updatedAt": "2012-10-22T05:00:22.059Z",
+            "objectId": "jwR6k9QRF5",
+            "__type": "Object",
+            "className": "_User"
+          },
+          "location": {
+            "__type": "GeoPoint",
+            "latitude": 37.785834,
+            "longitude": -122.406417
+          },
+          "text": "My house",
+          "createdAt": "2012-10-22T17:26:30.875Z",
+          "updatedAt": "2012-10-22T17:26:30.875Z",
+          "objectId": "KAbvsRQ1c6",
+          "ACL": {
+            "*": {
+              "read": true
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "user": {
+            "username": "foo",
+            "email": "foo@bar.com",
+            "createdAt": "2012-10-22T05:00:22.059Z",
+            "updatedAt": "2012-10-22T05:00:22.059Z",
+            "objectId": "jwR6k9QRF5",
+            "__type": "Object",
+            "className": "_User"
+          },
+          "location": {
+            "__type": "GeoPoint",
+            "latitude": 37.785834,
+            "longitude": -122.406417
+          },
+          "text": "Foobar",
+          "createdAt": "2012-10-22T18:10:29.227Z",
+          "updatedAt": "2012-10-22T18:10:29.227Z",
+          "objectId": "WnZpPwpt2R",
+          "ACL": {
+            "*": {
+              "read": true
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "user": {
+            "username": "foo",
+            "email": "foo@bar.com",
+            "createdAt": "2012-10-22T05:00:22.059Z",
+            "updatedAt": "2012-10-22T05:00:22.059Z",
+            "objectId": "jwR6k9QRF5",
+            "__type": "Object",
+            "className": "_User"
+          },
+          "location": {
+            "__type": "GeoPoint",
+            "latitude": 37.785834,
+            "longitude": -122.406417
+          },
+          "text": "Foobar2\n",
+          "createdAt": "2012-10-22T19:00:04.086Z",
+          "updatedAt": "2012-10-22T19:00:04.086Z",
+          "objectId": "FNwzVXgfc2",
+          "ACL": {
+            "*": {
+              "read": true
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "user": {
+            "username": "foo",
+            "email": "foo@bar.com",
+            "createdAt": "2012-10-22T05:00:22.059Z",
+            "updatedAt": "2012-10-22T05:00:22.059Z",
+            "objectId": "jwR6k9QRF5",
+            "__type": "Object",
+            "className": "_User"
+          },
+          "location": {
+            "__type": "GeoPoint",
+            "latitude": 37.785834,
+            "longitude": -122.406417
+          },
+          "text": "Foobar4\n",
+          "createdAt": "2012-10-23T01:52:16.213Z",
+          "updatedAt": "2012-10-23T01:52:16.213Z",
+          "objectId": "NXPQejvxsA",
+          "ACL": {
+            "*": {
+              "read": true
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "user": {
+            "username": "foo",
+            "email": "foo@bar.com",
+            "createdAt": "2012-10-22T05:00:22.059Z",
+            "updatedAt": "2012-10-22T05:00:22.059Z",
+            "objectId": "jwR6k9QRF5",
+            "__type": "Object",
+            "className": "_User"
+          },
+          "location": {
+            "__type": "GeoPoint",
+            "latitude": 37.785834,
+            "longitude": -122.406417
+          },
+          "text": "Foobar5",
+          "createdAt": "2012-10-23T16:25:59.466Z",
+          "updatedAt": "2012-10-23T16:25:59.466Z",
+          "objectId": "XsCe6AZGdS",
+          "ACL": {
+            "*": {
+              "read": true
+            }
+          }
+        }
+      }
+    ]
+  }
+}
+

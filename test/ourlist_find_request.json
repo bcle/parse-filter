@@ -1,0 +1,18 @@
+{
+  "iid": "1B9EBAB4-2D9E-4E77-AB98-ED14B31ABD9F",
+  "data": {
+    "updatedAt": {
+      "$gt": {
+        "iso": "2012-10-26T01:36:20.738Z",
+        "__type": "Date"
+      }
+    }
+  },
+  "classname": "Person",
+  "limit": "1000",
+  "v": "i1.0.67",
+  "includeRelationStub": true,
+  "session_token": "g1uguhdezmetjlj7mc2g3f6xa",
+  "uuid": "0952FF35-87CB-4D0F-8FD3-06E947AA0894"
+}
+

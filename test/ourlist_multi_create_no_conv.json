@@ -1,0 +1,18 @@
+{
+  "iid": "1B9EBAB4-2D9E-4E77-AB98-ED14B31ABD9F",
+  "session_token": "g1uguhdezmetjlj7mc2g3f6xa",
+  "uuid": "D779AC39-1FCE-42AD-8517-84CB06F2DE61",
+  "commands": [
+    {
+      "op": "create",
+      "params": {
+        "data": "{\"name\":\"Task 11\",\"priority\":1,\"deleted\":0,\"ACL\":{\"hhWbGENGIg\":{\"write\":true,\"read\":true}}}",
+        "uuid": "F3D84DA1-BF8E-405A-A53D-8C8843AB2B19",
+        "classname": "ToDoItem"
+      }
+    }
+  ],
+  "includeRelationStub": true,
+  "v": "i1.0.67"
+}
+

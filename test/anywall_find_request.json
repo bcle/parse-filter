@@ -1,0 +1,19 @@
+{
+  "iid": "9DC41CD9-E3EC-4287-947F-215F97207374",
+  "data": {
+    "location": {
+      "$nearSphere": {
+        "longitude": 0,
+        "latitude": 0,
+        "__type": "GeoPoint"
+      },
+      "$maxDistance": 0.00004784178307957935
+    }
+  },
+  "classname": "Posts",
+  "include": "user",
+  "limit": "20",
+  "v": "i1.0.9",
+  "session_token": "ygw4o4uem1d7euapy1nk7bpoz",
+  "uuid": "7AE321EE-3783-4AC4-B6A5-8801860C0D1E"
+}

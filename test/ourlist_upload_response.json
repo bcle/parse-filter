@@ -1,0 +1,15 @@
+{
+  "result": {
+    "post_params": {
+      "signature": "RP/CYjZHOkQTIAHQeIe2Q2/i8Gw=",
+      "policy": "eyJleHBpcmF0aW9uIjoiMjAxMi0xMC0yNlQwMjozMDoxOFoiLCJjb25kaXRpb25zIjpbeyJidWNrZXQiOiJmaWxlcy5wYXJzZS5jb20ifSx7ImtleSI6IjE2MDY1YTU5LTBkODctNGViZC1iNmMyLTRkZTQxZGNlZWY5Ny9iY2NhNGVkZC02ZTRjLTQ0MTctYmM1My03YWQ5YzE2Njk0MTUtNzRTOWxSNVZFTy1waG90by5wbmcifSx7ImFjbCI6InB1YmxpYy1yZWFkIn0sWyJzdGFydHMtd2l0aCIsIiRDb250ZW50LVR5cGUiLCIiXSxbImNvbnRlbnQtbGVuZ3RoLXJhbmdlIiwwLDEwNDg1NzYwXV19",
+      "AWSAccessKeyId": "AKIAJQLOPID646DE3XXA",
+      "acl": "public-read",
+      "key": "16065a59-0d87-4ebd-b6c2-4de41dceef97/bcca4edd-6e4c-4417-bc53-7ad9c1669415-74S9lR5VEO-photo.png"
+    },
+    "post_url": "http://files.parse.com/",
+    "url": "http://files.parse.com/16065a59-0d87-4ebd-b6c2-4de41dceef97/bcca4edd-6e4c-4417-bc53-7ad9c1669415-74S9lR5VEO-photo.png",
+    "name": "bcca4edd-6e4c-4417-bc53-7ad9c1669415-74S9lR5VEO-photo.png"
+  }
+}
+

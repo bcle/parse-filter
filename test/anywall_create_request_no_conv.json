@@ -1,0 +1,10 @@
+{
+  "iid": "9DC41CD9-E3EC-4287-947F-215F97207374",
+  "data": "{\"user\":{\"objectId\":\"jwR6k9QRF5\",\"className\":\"_User\",\"__type\":\"Pointer\"},\"location\":{\"longitude\":-122.406417,\"latitude\":37.785834,\"__type\":\"GeoPoint\"},\"text\":\"Foobar6\",\"ACL\":{\"*\":{\"read\":true}}}",
+  "classname": "Posts",
+  "v": "i1.1.12",
+  "includeRelationStub": true,
+  "session_token": "ygw4o4uem1d7euapy1nk7bpoz",
+  "uuid": "7089FD55-C3EE-42D5-B83C-3023DAD2E204"
+}
+

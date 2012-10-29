@@ -1,0 +1,12 @@
+{
+  "result": {
+    "session_token": "ygw4o4uem1d7euapy1nk7bpoz",
+    "data": {
+      "username": "foo",
+      "email": "foo@bar.com",
+      "createdAt": "2012-10-22T05:00:22.059Z",
+      "updatedAt": "2012-10-22T05:00:22.059Z",
+      "objectId": "jwR6k9QRF5"
+    }
+  }
+}
