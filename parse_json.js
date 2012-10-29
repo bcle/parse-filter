@@ -9,7 +9,7 @@ var propNames = {
   '__type':1,
   'iid':1,
   'uuid':1,
-  'data':1,
+  'data':'follow',
   'classname':1,
   'className':1,
   'v':1,
@@ -20,16 +20,24 @@ var propNames = {
   '$in':1,
   '$nin':1,
   'commands':'follow',
-  'op':'follow',
+  'op':1,
   'params':'follow',
-  'name':1,
+  'result':'follow',
+  // 'name':1,
   'post_params':1,
   'post_url':1,
   'url':1,
+  'longitude':1,
+  'latitude':1
 };
 
 module.exports = function process_object (obj, transform, encoding) {
-  for (key in obj) {
+  if (Array.isArray(obj)) {
+    obj.forEach(function (element) {
+      if (typeof element === 'object')
+        process_object(element, transform, encoding);
+    });
+  } else for (var key in obj) {
     var opc = propNames[key];
     var val = obj[key];
     if (!opc) {
@@ -43,7 +51,13 @@ module.exports = function process_object (obj, transform, encoding) {
       }
       obj[key] = val;
     } else if (opc === 'follow') {
-      process_object(val, transform, encoding); 
+      if (key === 'data' && typeof val === 'string')
+        obj[key] = val = JSON.parse(val);
+        
+      if (typeof val === 'string')
+        obj[key] = transform(val);
+      else
+        process_object(val, transform, encoding); 
     }
   }
 }
