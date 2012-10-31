@@ -1,5 +1,4 @@
 var Proxy = require('mitm-proxy')
-  , hexy = require('hexy')
   , tmp = require('tmp')
   , fs = require('fs')
   , qs = require('querystring')

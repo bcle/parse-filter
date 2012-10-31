@@ -1,0 +1,11 @@
+{ "name": "parse-filter",
+  "version": "0.0.1",
+  "author": "Bich Le",
+  "description" : "Parse API filter",
+  "main" : "parse_filter",
+  "engines" : { "node": ">0.8.0" },
+  "keywords" : [ "proxy", "mitm", "http", "https" ],
+  "dependencies" : {
+    "tmp": ">=0.0.14"
+  }
+}
