@@ -28,20 +28,25 @@ function decode(input) {
   return input.substr(4, input.length-8);
 }
 
-function encrypt(input) {
+function encrypt(input, encoding) {
   var cipher = crypto.createCipher(enc_algo, enc_key);
-  var output = cipher.update(input, 'utf8', 'hex');
-  output = 'a' + output + cipher.final('hex'); // 'a' prepended to satisfy Parse's key name requirement
+  var output = cipher.update(input, 'utf8', encoding);
+  output = 'a' + output + cipher.final(encoding); // 'a' prepended to satisfy Parse's key name requirement
   return output;
 }  
 
-function decrypt(input) {
+function decrypt(input, encoding) {
   input = input.substr(1, input.length - 1); // remove 'a' prefix
   var decipher = crypto.createDecipher(enc_algo, enc_key);
-  var output = decipher.update(input, 'hex', 'utf8');
+  var output = decipher.update(input, encoding, 'utf8');
   output = output + decipher.final('utf8');
   return output;
 }  
+
+function encrypt_key(input) { return encrypt(input, 'hex'); }
+function decrypt_key(input) { return decrypt(input, 'hex'); }
+function encrypt_val(input) { return encrypt(input, 'base64'); }
+function decrypt_val(input) { return decrypt(input, 'base64'); }
 
 /*
  * reqFromApp: The http request from the client application.
@@ -81,7 +86,7 @@ function request_filter(reqFromApp, respToApp, next) {
 
   var str = body.toString();
   var obj = JSON.parse(str);
-  process_object(obj, encrypt, api, 1, true);
+  process_object(obj, encrypt_val, api, 1, encrypt_key);
   str = JSON.stringify(obj, null, 1);
 
   log.warn('Request filter: %s %s api %s modified body:\n%s',
@@ -145,7 +150,7 @@ function response_filter(reqFromApp, respFromRemote, next) {
           buf? buf.length : 0,
           buf? JSON.stringify(obj, null, 1) : ''
         );  
-        process_object(obj, decrypt, api, 1, true);
+        process_object(obj, decrypt_val, api, 1, decrypt_key);
         str = JSON.stringify(obj, null, 1);
         respFromRemote.body = new Buffer(str);
         respFromRemote.headers['content-length'] = respFromRemote.body.length.toString();
