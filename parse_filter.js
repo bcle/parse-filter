@@ -4,6 +4,8 @@ var Proxy = require('mitm-proxy')
   , fs = require('fs')
   , qs = require('querystring')
   , process_object = require('./parse_json')
+  , path  = require('path')
+  , crypto  = require('crypto')
   , URL = require('url');
 
 var optionsParser = Proxy.getOptionsParser();
@@ -15,14 +17,32 @@ var proxy = new Proxy(options);
 var log = proxy.getLogger();
 var zlib = require('zlib');
 
+var enc_key_path = path.join(__dirname, 'aes_key.bin');
+var enc_key = fs.readFileSync(enc_key_path);
+var enc_algo = 'aes128';
 
 function encode(input) {
-   return 'AAAA' + input + 'AAAA';
+  return 'AAAA' + input + 'AAAA';
 }
 
 function decode(input) {
-   return input.substr(4, input.length-8);
+  return input.substr(4, input.length-8);
 }
+
+function encrypt(input) {
+  var cipher = crypto.createCipher(enc_algo, enc_key);
+  var output = cipher.update(input, 'utf8', 'hex');
+  output = 'a' + output + cipher.final('hex'); // 'a' prepended to satisfy Parse's key name requirement
+  return output;
+}  
+
+function decrypt(input) {
+  input = input.substr(1, input.length - 1); // remove 'a' prefix
+  var decipher = crypto.createDecipher(enc_algo, enc_key);
+  var output = decipher.update(input, 'hex', 'utf8');
+  output = output + decipher.final('utf8');
+  return output;
+}  
 
 /*
  * reqFromApp: The http request from the client application.
@@ -62,8 +82,8 @@ function request_filter(reqFromApp, respToApp, next) {
 
   var str = body.toString();
   var obj = JSON.parse(str);
-  process_object(obj, encode, api, 1, false);
-  str = JSON.stringify(obj, null, 2);
+  process_object(obj, encrypt, api, 1, true);
+  str = JSON.stringify(obj, null, 1);
 
   log.warn('Request filter: %s %s api %s modified body:\n%s',
     reqFromApp.method,
@@ -124,10 +144,10 @@ function response_filter(reqFromApp, respFromRemote, next) {
         log.warn('Response filter: status %d with json body of length %d: \n%s',
           respFromRemote.statusCode,
           buf? buf.length : 0,
-          buf? JSON.stringify(obj, null, 2) : ''
+          buf? JSON.stringify(obj, null, 1) : ''
         );  
-        process_object(obj, decode, api, 1, false);
-        str = JSON.stringify(obj, null, 2);
+        process_object(obj, decrypt, api, 1, true);
+        str = JSON.stringify(obj, null, 1);
         respFromRemote.body = new Buffer(str);
         respFromRemote.headers['content-length'] = respFromRemote.body.length.toString();
         log.warn('Response filter: new body length %d and modified body:\n%s', respFromRemote.body.length, str);
