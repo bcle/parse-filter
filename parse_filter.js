@@ -3,6 +3,7 @@ var Proxy = require('mitm-proxy')
   , tmp = require('tmp')
   , fs = require('fs')
   , qs = require('querystring')
+  , process_object = require('./parse_json')
   , URL = require('url');
 
 var optionsParser = Proxy.getOptionsParser();
@@ -13,6 +14,15 @@ options.response_filter = response_filter;
 var proxy = new Proxy(options);
 var log = proxy.getLogger();
 var zlib = require('zlib');
+
+
+function encode(input) {
+   return 'AAAA' + input + 'AAAA';
+}
+
+function decode(input) {
+   return input.substr(4, input.length-8);
+}
 
 /*
  * reqFromApp: The http request from the client application.
@@ -34,89 +44,34 @@ function request_filter(reqFromApp, respToApp, next) {
   if (!ctype) 
     return next();
 
+  var api = urlInfo.pathname.split('/').pop(); // API name
   var body = reqFromApp.body;
-  var obj = null; // JSON body
 
-  log.warn('Request filter: %s %s enc [%s] body length %d body:\n%s',
+  log.warn('Request filter: %s %s ctype [%s] api %s len %d body:\n%s',
     reqFromApp.method,
     reqFromApp.url,
     ctype,
+    api,
     body? body.length : 0,
     body? body.toString():'');
 
-  if (ctype.indexOf('application/x-www-form-urlencoded') >= 0) {
-    // hack
-    /*
-    var modified_str = body.toString() + '&foo=bar';
-    reqFromApp.body = new Buffer(modified_str);
-    body = reqFromApp.body;
-    */
-    var urlenc_str = body.toString();
-    log.trace('Request filter: %s with x-www-form-urlencoded body of length %d on URL %s : \n%s',
-      reqFromApp.method,
-      body? body.length : 0,
-      reqFromApp.url,
-      urlenc_str
-    );
-    try {
-      obj = qs.parse(urlenc_str);
-      log.trace('Request filter: decoded URL-encoded body:\n%s\n', JSON.stringify(obj, null, 2));
-    } catch (err) {
-      log.error('Caught exception [%s] while parsing url-encoded string: %s', err, urlenc_str);
-    }
-  } else if (ctype.indexOf('application/json') >= 0) {
-    obj = JSON.parse(body.toString());
-
-    log.warn('Request filter: %s with json body of length %d on URL %s : \n%s',
-      reqFromApp.method,
-      body? body.length : 0,
-      reqFromApp.url,
-      body? JSON.stringify(obj, null, 2) : ''
-    );
+  if (ctype.indexOf('application/json') < 0) {
+    log.warn('Request filter: unsupported content type %s', ctype);
+    return next();
   }
-  if (obj) {
-    if (typeof obj.data === 'string') {
-      try {
-	var data = JSON.parse(obj.data);
-	// Hack for AnyWall
-	if (typeof data.text === 'string')
-	  data.text = data.text + ' (hacked)';
-	obj.data = data;
-        log.warn('Request filter: %s with json body of length %d on URL %s after converting "data" from string to json: \n%s',
-                  reqFromApp.method,
-                  body? body.length : 0,
-                  reqFromApp.url,
-                  JSON.stringify(obj, null, 2));
-      } catch (err) {
-        log.error('Caught exception %s while parsing JSON from string: %s', err, obj.data);
-      }
-      reqFromApp.body = new Buffer(JSON.stringify(obj));
-    } else if (obj.commands && Array.isArray(obj.commands)) {
-      var cmd = obj.commands[0];
-      if (cmd && cmd.params && cmd.params.data) {
-        var dataStr = cmd.params.data;
-	var data = JSON.parse(dataStr);
-	// data.foo = 'bar';
 
-	if (typeof data.name === 'string')
-	  data.name = data.name + ' (hacked)';
-	if (typeof data.priority === 'number')
-	  data.priority += 2;
-	var newStr = JSON.stringify(data);
-	// cmd.params.data = newStr;
-	cmd.params.data = data;
-	log.warn('Modified data:\n%s', JSON.stringify(data, null, 2)); 
-	reqFromApp.body = new Buffer(JSON.stringify(obj));
-      }
-    }
-  } else if (ctype.indexOf('text/plain') >= 0) {
-    log.warn('Request filter: %s with text/plain body of length %d on URL %s : \n%s',
-      reqFromApp.method,
-      body? body.length : 0,
-      reqFromApp.url,
-      body? body.toString() : ''
-    );
-  }
+  var str = body.toString();
+  var obj = JSON.parse(str);
+  process_object(obj, encode, api, 1, false);
+  str = JSON.stringify(obj, null, 2);
+
+  log.warn('Request filter: %s %s api %s modified body:\n%s',
+    reqFromApp.method,
+    reqFromApp.url,
+    api,
+    str);
+
+  reqFromApp.body = new Buffer(str);
   next();
 }
 
@@ -130,6 +85,13 @@ function request_filter(reqFromApp, respToApp, next) {
  *       This forwards the (potentially modified) request to the remote server.
  */
 function response_filter(reqFromApp, respFromRemote, next) {
+  var urlInfo = URL.parse(reqFromApp.url);
+  if (urlInfo.hostname !== 'api.parse.com') {
+    log.warn('Response filter: skipping response from hostname: %s', urlInfo.hostname);
+    return next();
+  }  
+
+  var api = urlInfo.pathname.split('/').pop(); // API name
   var body = respFromRemote.body;
 
   if (!body || !body.length)
@@ -164,6 +126,11 @@ function response_filter(reqFromApp, respFromRemote, next) {
           buf? buf.length : 0,
           buf? JSON.stringify(obj, null, 2) : ''
         );  
+        process_object(obj, decode, api, 1, false);
+        str = JSON.stringify(obj, null, 2);
+        respFromRemote.body = new Buffer(str);
+        respFromRemote.headers['content-length'] = respFromRemote.body.length.toString();
+        log.warn('Response filter: new body length %d and modified body:\n%s', respFromRemote.body.length, str);
       } catch (err) {
         log.error('Caught exception %s while parsing JSON from string: %s', err, str);
         var opts = { prefix: 'bad-json-' + (encoding? (encoding + '-'):''), keep: true };

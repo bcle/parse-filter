@@ -41,8 +41,12 @@ var propNames = {
   'post_params':true,
   'post_url':true,
   'url':true,
-  'username': [{maxDepth:3, api: 'user_login'}],
-  'email': [{maxDepth:3, api: 'user_login'}],  
+  'username': true,
+  'email': true,
+  'user_password': true,
+  'code': true,
+  'error': true,
+  'syncExp': true,
   'longitude':true,
   'latitude':true
 };
@@ -69,11 +73,11 @@ function lookup(obj, key, api, depth) {
   return result;
 }
 
-module.exports = function process_object (obj, transform, api, depth) {
+module.exports = function process_object (obj, transform, api, depth, allowKeyTransform) {
   if (Array.isArray(obj)) {
     obj.forEach(function (element) {
       if (typeof element === 'object')
-        process_object(element, transform, api, depth);
+        process_object(element, transform, api, depth, allowKeyTransform);
     });
   } else for (var key in obj) {
     var opc = lookup(obj, key, api, depth);
@@ -84,14 +88,14 @@ module.exports = function process_object (obj, transform, api, depth) {
       recurse = opc.recurse;
       if (opc.convert && typeof val === 'string')
         val = JSON.parse(val);
-    } else { // enable key transformation
+    } else if (allowKeyTransform) { // enable key transformation
       key = transform(key);
     }
     if (recurse) {
       if (typeof val === 'string')
         val = transform(val);
       else if (typeof val === 'object')
-        process_object(val, transform, api, depth + 1); 
+        process_object(val, transform, api, depth + 1, allowKeyTransform); 
     } 
     obj[key] = val;
   }
