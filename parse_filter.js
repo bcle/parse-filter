@@ -58,6 +58,7 @@ function decrypt_val(input) { return decrypt(input, 'base64'); }
  *       This forwards the (potentially modified) request to the remote server.
  */
 function request_filter(reqFromApp, respToApp, next) {
+  // return next();
 
   var urlInfo = URL.parse(reqFromApp.url);
   if (urlInfo.hostname !== 'api.parse.com') {
@@ -86,7 +87,8 @@ function request_filter(reqFromApp, respToApp, next) {
 
   var str = body.toString();
   var obj = JSON.parse(str);
-  process_object(obj, encrypt_val, api, 1, encrypt_key);
+  //process_object(obj, encrypt_val, api, 1, encrypt_key);
+  process_object(obj, encrypt_val, api, 1);
   str = JSON.stringify(obj, null, 1);
 
   log.warn('Request filter: %s %s api %s modified body:\n%s',
@@ -109,6 +111,7 @@ function request_filter(reqFromApp, respToApp, next) {
  *       This forwards the (potentially modified) request to the remote server.
  */
 function response_filter(reqFromApp, respFromRemote, next) {
+  // return next();
   var urlInfo = URL.parse(reqFromApp.url);
   if (urlInfo.hostname !== 'api.parse.com') {
     log.warn('Response filter: skipping response from hostname: %s', urlInfo.hostname);
@@ -150,7 +153,7 @@ function response_filter(reqFromApp, respFromRemote, next) {
           buf? buf.length : 0,
           buf? JSON.stringify(obj, null, 1) : ''
         );  
-        process_object(obj, decrypt_val, api, 1, decrypt_key);
+        process_object(obj, decrypt_val, api, 1);
         str = JSON.stringify(obj, null, 1);
         respFromRemote.body = new Buffer(str);
         respFromRemote.headers['content-length'] = respFromRemote.body.length.toString();
