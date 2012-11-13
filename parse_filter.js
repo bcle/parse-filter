@@ -87,8 +87,7 @@ function request_filter(reqFromApp, respToApp, next) {
 
   var str = body.toString();
   var obj = JSON.parse(str);
-  //process_object(obj, encrypt_val, api, 1, encrypt_key);
-  process_object(obj, encrypt_val, api, 1);
+  process_object(obj, encrypt_val, api, 1, encrypt_key);
   str = JSON.stringify(obj, null, 1);
 
   log.warn('Request filter: %s %s api %s modified body:\n%s',
@@ -153,7 +152,7 @@ function response_filter(reqFromApp, respFromRemote, next) {
           buf? buf.length : 0,
           buf? JSON.stringify(obj, null, 1) : ''
         );  
-        process_object(obj, decrypt_val, api, 1);
+        process_object(obj, decrypt_val, api, 1, decrypt_key);
         str = JSON.stringify(obj, null, 1);
         respFromRemote.body = new Buffer(str);
         respFromRemote.headers['content-length'] = respFromRemote.body.length.toString();
