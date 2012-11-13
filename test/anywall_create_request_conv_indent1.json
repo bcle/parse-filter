@@ -1,0 +1,12 @@
+{
+ "session_token": "ygw4o4uem1d7euapy1nk7bpoz",
+ "classname": "Posts",
+ "data": {
+  "text": "Sushi bar",
+  "location": {
+   "longitude": -122.406417,
+   "latitude": 37.785834,
+   "__type": "GeoPoint"
+  }
+ }
+}
